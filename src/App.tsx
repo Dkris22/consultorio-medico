@@ -1,9 +1,14 @@
-function App() {
+import React from "react";
+import Titulo from "./Components/Titulo";
+import Grid from "./Components/Grid";
+
+const App: React.FC = () => {
   return (
-    <div className="App">
-      <h1>Welcome to the Consultorio Médico</h1>
-      {/* Other components and content can be added here */}
+    <div className="container">
+      <Titulo />
+      <Grid />
     </div>
   );
-}
+};
+
 export default App;

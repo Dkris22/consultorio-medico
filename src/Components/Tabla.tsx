@@ -2,7 +2,7 @@ import React from "react";
 
 const Tabla: React.FC = () => {
   return (
-    <table className="table">
+    <table className="table table-bordered">
       <thead>
         <tr>
           <th scope="col">#</th>
@@ -11,24 +11,15 @@ const Tabla: React.FC = () => {
           <th scope="col">Handle</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody className="table-group-divider">
         <tr>
           <th scope="row">1</th>
-          <td>Mark</td>
-          <td>Otto</td>
-          <td>@mdo</td>
         </tr>
         <tr>
           <th scope="row">2</th>
-          <td>Jacob</td>
-          <td>Thornton</td>
-          <td>@fat</td>
         </tr>
         <tr>
           <th scope="row">3</th>
-          <td>John</td>
-          <td>Doe</td>
-          <td>@social</td>
         </tr>
       </tbody>
     </table>

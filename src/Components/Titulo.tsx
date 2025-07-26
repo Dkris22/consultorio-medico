@@ -1,16 +1,23 @@
 import React from "react";
 
-const Titulo: React.FC = () => {
+type TituloProps = {
+  tituloG?: string;
+  tituloM?: string;
+};
+
+const Titulo: React.FC<TituloProps> = ({ tituloG, tituloM }) => {
   return (
     <div className="text-center my-4">
-      <div
-        className="container-md border border-dark rounded p-2"
-        style={{ backgroundColor: "#d2d2d2ff" }}
-      >
-        <h1 className="text-primary-emphasis">
-          Agenda de Citas - Consultorio Médico
-        </h1>
-      </div>
+      {tituloM && <h4 className="text-secondary">{tituloM}</h4>}
+
+      {tituloG && (
+        <div
+          className="container-md border border-dark rounded p-3"
+          style={{ backgroundColor: "#e4f7feff" }}
+        >
+          <h1 className="text-primary-emphasis">{tituloG}</h1>
+        </div>
+      )}
     </div>
   );
 };

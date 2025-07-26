@@ -2,8 +2,10 @@ import React from "react";
 
 const Boton: React.FC = () => {
   return (
-    <div className="text-center my-4">
-      <h1 className="text-primary">Agenda de Citas - Consultorio Médico</h1>
+    <div className="text-end my-4">
+      <button type="button" className="btn btn-primary btn-lg">
+        Agendar una cita
+      </button>
     </div>
   );
 };

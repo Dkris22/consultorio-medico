@@ -52,7 +52,19 @@ const App: React.FC = () => {
       </Modal>
 
       <Titulo tituloM="Lista de Citas" />
-      <Tabla citas={citas} />
+      <Tabla
+        citas={[...citas]
+          .filter((cita) => {
+            const ahora = new Date();
+            const fechaHoraCita = new Date(`${cita.fecha}T${cita.hora}`);
+            return fechaHoraCita >= ahora;
+          })
+          .sort((a, b) => {
+            const fechaHoraA = new Date(`${a.fecha}T${a.hora}`);
+            const fechaHoraB = new Date(`${b.fecha}T${b.hora}`);
+            return fechaHoraA.getTime() - fechaHoraB.getTime();
+          })}
+      />
     </div>
   );
 };

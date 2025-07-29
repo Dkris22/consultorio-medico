@@ -1,4 +1,3 @@
-// src/Components/Modal.tsx
 import React, { useRef, useEffect } from "react";
 
 type ModalProps = {

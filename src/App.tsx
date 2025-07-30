@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Titulo from "./Components/Titulo";
 import Grid from "./Components/Grid";
 import Boton from "./Components/Boton";
@@ -22,7 +22,13 @@ type Cita = {
 };
 
 const App: React.FC = () => {
-  const [citas, setCitas] = useState<Cita[]>([]);
+  const [citas, setCitas] = useState<Cita[]>(() => {
+    const citasGuardadas = localStorage.getItem("citas");
+    return citasGuardadas ? JSON.parse(citasGuardadas) : [];
+  });
+  useEffect(() => {
+    localStorage.setItem("citas", JSON.stringify(citas));
+  }, [citas]);
 
   const agregarCita = (cita: Omit<Cita, "id">) => {
     const nuevaCita: Cita = {
@@ -31,7 +37,7 @@ const App: React.FC = () => {
     };
     setCitas([...citas, nuevaCita]);
 
-    // Cierra el modal manualmente
+    // Cierra el modal
     const modalElement = document.getElementById("modalFormulario");
     const modalInstance =
       window.bootstrap.Modal.getInstance(modalElement!) ||
@@ -39,32 +45,65 @@ const App: React.FC = () => {
     modalInstance.hide();
   };
 
+  const [filtro, setFiltro] = useState("");
+
+  const handleFiltroChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFiltro(e.target.value.toLowerCase());
+  };
+
   return (
-    <div className="container">
-      <Titulo tituloG="Agenda de Citas - Consultorio Médico" />
-      <Grid />
+    <div
+      style={{
+        backgroundImage: "url('./images/doctor.png')",
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
+        minHeight: "100vh",
+        width: "100%",
+      }}
+    >
+      <div className="container">
+        <Titulo tituloG="Agenda de Citas - Consultorio Médico" />
+        <Grid />
 
-      {/* Usa el componente Boton y activa el modal por id */}
-      <Boton modalTargetId="modalFormulario" />
+        <div className="row align-items-center my-4">
+          <div className="col-md-6">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="🔍 Buscar por especialidad o médico"
+              value={filtro}
+              onChange={handleFiltroChange}
+            />
+          </div>
+          <div className="col-md-6 text-end">
+            <Boton modalTargetId="modalFormulario" />
+          </div>
+        </div>
 
-      <Modal id="modalFormulario" title="Registrar nueva cita">
-        <Formulario onSubmit={agregarCita} />
-      </Modal>
+        <Modal id="modalFormulario" title="Registrar nueva cita">
+          <Formulario onSubmit={agregarCita} />
+        </Modal>
 
-      <Titulo tituloM="Lista de Citas" />
-      <Tabla
-        citas={[...citas]
-          .filter((cita) => {
-            const ahora = new Date();
-            const fechaHoraCita = new Date(`${cita.fecha}T${cita.hora}`);
-            return fechaHoraCita >= ahora;
-          })
-          .sort((a, b) => {
-            const fechaHoraA = new Date(`${a.fecha}T${a.hora}`);
-            const fechaHoraB = new Date(`${b.fecha}T${b.hora}`);
-            return fechaHoraA.getTime() - fechaHoraB.getTime();
-          })}
-      />
+        <Titulo tituloM="Lista de Citas" />
+
+        <Tabla
+          citas={[...citas]
+            .filter((cita) => {
+              const ahora = new Date();
+              const fechaHoraCita = new Date(`${cita.fecha}T${cita.hora}`);
+              const coincideFiltro =
+                cita.especialidad.toLowerCase().includes(filtro) ||
+                cita.medico.toLowerCase().includes(filtro);
+              return fechaHoraCita >= ahora && coincideFiltro;
+            })
+            .sort((a, b) => {
+              const fechaHoraA = new Date(`${a.fecha}T${a.hora}`);
+              const fechaHoraB = new Date(`${b.fecha}T${b.hora}`);
+              return fechaHoraA.getTime() - fechaHoraB.getTime();
+            })}
+        />
+      </div>
     </div>
   );
 };

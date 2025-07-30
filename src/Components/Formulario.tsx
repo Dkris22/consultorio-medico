@@ -1,4 +1,3 @@
-// src/Components/Formulario.tsx
 import React, { useState } from "react";
 
 type FormularioProps = {

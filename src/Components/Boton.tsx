@@ -1,4 +1,3 @@
-// src/Components/Boton.tsx
 import React from "react";
 
 type BotonProps = {
@@ -16,7 +15,7 @@ const Boton: React.FC<BotonProps> = ({
         type="button"
         className="btn btn-primary btn-lg"
         data-bs-toggle="modal"
-        data-bs-target={`#${modalTargetId}`} // importante: #
+        data-bs-target={`#${modalTargetId}`}
       >
         {label}
       </button>

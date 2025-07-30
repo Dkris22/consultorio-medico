@@ -19,20 +19,24 @@ type Cita = {
   hora: string;
   especialidad: string;
   medico: string;
+  estado: "Pendiente" | "Atendida" | "Cancelada"; // Agregado para manejar el estado
 };
 
 const App: React.FC = () => {
-  const [citas, setCitas] = useState<Cita[]>(() => {
+  const [citas, setCitas] = useState<Cita[]>([]);
+  () => {
     const citasGuardadas = localStorage.getItem("citas");
     return citasGuardadas ? JSON.parse(citasGuardadas) : [];
-  });
+  };
+
   useEffect(() => {
     localStorage.setItem("citas", JSON.stringify(citas));
   }, [citas]);
 
-  const agregarCita = (cita: Omit<Cita, "id">) => {
+  const agregarCita = (cita: Omit<Cita, "id" | "estado">) => {
     const nuevaCita: Cita = {
       id: citas.length + 1,
+      estado: "Pendiente", // Inicialmente, todas las citas son pendientes
       ...cita,
     };
     setCitas([...citas, nuevaCita]);
@@ -43,6 +47,22 @@ const App: React.FC = () => {
       window.bootstrap.Modal.getInstance(modalElement!) ||
       new window.bootstrap.Modal(modalElement!);
     modalInstance.hide();
+  };
+
+  const marcarComoAtendida = (id: number) => {
+    setCitas(
+      citas.map((cita) =>
+        cita.id === id ? { ...cita, estado: "Atendida" } : cita
+      )
+    );
+  };
+
+  const cancelarCita = (id: number) => {
+    setCitas(
+      citas.map((cita) =>
+        cita.id === id ? { ...cita, estado: "Cancelada" } : cita
+      )
+    );
   };
 
   const [filtro, setFiltro] = useState("");
@@ -102,6 +122,8 @@ const App: React.FC = () => {
               const fechaHoraB = new Date(`${b.fecha}T${b.hora}`);
               return fechaHoraA.getTime() - fechaHoraB.getTime();
             })}
+          onMarcarComoAtendida={marcarComoAtendida} // Pasar la función
+          onCancelarCita={cancelarCita} // Pasar la función
         />
       </div>
     </div>

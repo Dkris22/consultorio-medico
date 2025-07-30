@@ -7,13 +7,20 @@ type Cita = {
   hora: string;
   especialidad: string;
   medico: string;
+  estado: "Pendiente" | "Atendida" | "Cancelada"; // Agregado para manejar el estado
 };
 
 type Props = {
   citas: Cita[];
+  onMarcarComoAtendida: (id: number) => void; // Prop para marcar como atendida
+  onCancelarCita: (id: number) => void; // Prop para cancelar cita
 };
 
-const Tabla: React.FC<Props> = ({ citas }) => {
+const Tabla: React.FC<Props> = ({
+  citas,
+  onMarcarComoAtendida,
+  onCancelarCita,
+}) => {
   // Agrupar citas por fecha
   const citasPorFecha: { [fecha: string]: Cita[] } = {};
   citas.forEach((cita) => {
@@ -48,6 +55,8 @@ const Tabla: React.FC<Props> = ({ citas }) => {
                 <th>Hora</th>
                 <th>Especialidad</th>
                 <th>Médico</th>
+                <th>Estado</th>
+                <th>Acciones</th> {/* Nueva columna para acciones */}
               </tr>
             </thead>
             <tbody>
@@ -61,6 +70,26 @@ const Tabla: React.FC<Props> = ({ citas }) => {
                   <td>{cita.hora}</td>
                   <td>{cita.especialidad}</td>
                   <td>{cita.medico}</td>
+                  <td>{cita.estado}</td> {/* Mostrar estado */}
+                  <td>
+                    {cita.estado === "Pendiente" && (
+                      <div className="btn-group" role="group">
+                        <button
+                          onClick={() => onMarcarComoAtendida(cita.id)}
+                          className="btn btn-sm btn-success"
+                        >
+                          Atender
+                        </button>
+                        <button
+                          onClick={() => onCancelarCita(cita.id)}
+                          className="btn btn-sm btn-danger ms-2"
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                    )}
+                    {cita.estado !== "Pendiente" && "-"}
+                  </td>
                 </tr>
               ))}
             </tbody>

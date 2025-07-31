@@ -7,21 +7,17 @@ type Cita = {
   hora: string;
   especialidad: string;
   medico: string;
-  estado: "Pendiente" | "Atendida" | "Cancelada"; // Agregado para manejar el estado
+  estado: 'pendiente' | 'atendida' | 'cancelada'; 
 };
 
 type Props = {
   citas: Cita[];
-  onMarcarComoAtendida: (id: number) => void; // Prop para marcar como atendida
-  onCancelarCita: (id: number) => void; // Prop para cancelar cita
+  onMarcarComoAtendida: (id: number) => void; 
+  onCancelarCita: (id: number) => void; 
 };
 
-const Tabla: React.FC<Props> = ({
-  citas,
-  onMarcarComoAtendida,
-  onCancelarCita,
-}) => {
-  // Agrupar citas por fecha
+const Tabla: React.FC<Props> = ({ citas, onMarcarComoAtendida, onCancelarCita }) => {
+  
   const citasPorFecha: { [fecha: string]: Cita[] } = {};
   citas.forEach((cita) => {
     if (!citasPorFecha[cita.fecha]) {
@@ -56,7 +52,7 @@ const Tabla: React.FC<Props> = ({
                 <th>Especialidad</th>
                 <th>Médico</th>
                 <th>Estado</th>
-                <th>Acciones</th> {/* Nueva columna para acciones */}
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -70,9 +66,9 @@ const Tabla: React.FC<Props> = ({
                   <td>{cita.hora}</td>
                   <td>{cita.especialidad}</td>
                   <td>{cita.medico}</td>
-                  <td>{cita.estado}</td> {/* Mostrar estado */}
+                  <td>{cita.estado}</td> 
                   <td>
-                    {cita.estado === "Pendiente" && (
+                    {cita.estado === 'pendiente' && (
                       <div className="btn-group" role="group">
                         <button
                           onClick={() => onMarcarComoAtendida(cita.id)}
@@ -88,7 +84,7 @@ const Tabla: React.FC<Props> = ({
                         </button>
                       </div>
                     )}
-                    {cita.estado !== "Pendiente" && "-"}
+                    {cita.estado !== 'pendiente' && '-'}
                   </td>
                 </tr>
               ))}
@@ -101,3 +97,4 @@ const Tabla: React.FC<Props> = ({
 };
 
 export default Tabla;
+

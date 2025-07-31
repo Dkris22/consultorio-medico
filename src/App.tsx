@@ -5,6 +5,7 @@ import Boton from "./Components/Boton";
 import Tabla from "./Components/Tabla";
 import Formulario from "./Components/Formulario";
 import Modal from "./Components/Modal";
+import ResumenCitas from "./Components/ResumenCitas";
 
 declare global {
   interface Window {
@@ -27,6 +28,9 @@ const App: React.FC = () => {
     const citasGuardadas = localStorage.getItem("citas");
     return citasGuardadas ? JSON.parse(citasGuardadas) : [];
   });
+
+  const [mostrarResumen, setMostrarResumen] = useState(false);
+  const [filtro, setFiltro] = useState("");
 
   useEffect(() => {
     localStorage.setItem("citas", JSON.stringify(citas));
@@ -59,11 +63,28 @@ const App: React.FC = () => {
     ));
   };
 
-  const [filtro, setFiltro] = useState("");
-
   const handleFiltroChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFiltro(e.target.value.toLowerCase());
   };
+
+  const toggleResumen = () => {
+    setMostrarResumen(!mostrarResumen);
+  };
+
+  const citasFiltradas = [...citas]
+    .filter((cita) => {
+      const ahora = new Date();
+      const fechaHoraCita = new Date(`${cita.fecha}T${cita.hora}`);
+      const coincideFiltro =
+        cita.especialidad.toLowerCase().includes(filtro) ||
+        cita.medico.toLowerCase().includes(filtro);
+      return fechaHoraCita >= ahora && coincideFiltro;
+    })
+    .sort((a, b) => {
+      const fechaHoraA = new Date(`${a.fecha}T${a.hora}`);
+      const fechaHoraB = new Date(`${b.fecha}T${b.hora}`);
+      return fechaHoraA.getTime() - fechaHoraB.getTime();
+    });
 
   return (
     <div
@@ -91,6 +112,12 @@ const App: React.FC = () => {
             />
           </div>
           <div className="col-md-6 text-end">
+            <button 
+              onClick={toggleResumen}
+              className="btn btn-secondary me-2"
+            >
+              {mostrarResumen ? 'Ver Tabla' : 'Ver Resumen'}
+            </button>
             <Boton modalTargetId="modalFormulario" />
           </div>
         </div>
@@ -99,26 +126,17 @@ const App: React.FC = () => {
           <Formulario onSubmit={agregarCita} />
         </Modal>
 
-        <Titulo tituloM="Lista de Citas" />
+        <Titulo tituloM={mostrarResumen ? "Resumen de Citas" : "Lista de Citas"} />
 
-        <Tabla
-          citas={[...citas]
-            .filter((cita) => {
-              const ahora = new Date();
-              const fechaHoraCita = new Date(`${cita.fecha}T${cita.hora}`);
-              const coincideFiltro =
-                cita.especialidad.toLowerCase().includes(filtro) ||
-                cita.medico.toLowerCase().includes(filtro);
-              return fechaHoraCita >= ahora && coincideFiltro;
-            })
-            .sort((a, b) => {
-              const fechaHoraA = new Date(`${a.fecha}T${a.hora}`);
-              const fechaHoraB = new Date(`${b.fecha}T${b.hora}`);
-              return fechaHoraA.getTime() - fechaHoraB.getTime();
-            })}
-          onMarcarComoAtendida={marcarComoAtendida} 
-          onCancelarCita={cancelarCita} 
-        />
+        {mostrarResumen ? (
+          <ResumenCitas citas={citasFiltradas} />
+        ) : (
+          <Tabla
+            citas={citasFiltradas}
+            onMarcarComoAtendida={marcarComoAtendida} 
+            onCancelarCita={cancelarCita} 
+          />
+        )}
       </div>
     </div>
   );
